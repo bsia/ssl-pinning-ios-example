@@ -16,6 +16,15 @@ import util.control.Exception._
 
 object Hex {
   def valueOf(buf: Array[Byte]): String = buf.map("%02x" format _).mkString
+  def valueOfJava(buf: Array[Byte]): Iterator[String] = {
+    buf.map { b =>
+      if (b >= 0) {
+        "+0x%02x".format(b)
+      } else {
+        "-0x%02x".format(-b)
+      }
+    }.grouped(10).map(_.mkString(", "))
+  }
 }
 
 val certificateFactory = CertificateFactory.getInstance("X509")
@@ -31,6 +40,7 @@ args.foreach(arg => {
     val publicKey = certificate.getPublicKey()
     val publicKeyDer = publicKey.getEncoded()
     System.out.printf("%s: spki=> %s\n", arg, Hex.valueOf(publicKeyDer))
+    System.out.printf("%s:     =>\n%s\n", arg, Hex.valueOfJava(publicKeyDer).mkString("{\n    ",",\n    ","\n}"))
 
     val digestor = digestFactory.clone().asInstanceOf[MessageDigest]
     val publicKeyDigest = digestor.digest(publicKeyDer)
