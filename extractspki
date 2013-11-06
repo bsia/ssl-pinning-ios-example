@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Small script for extracting the SPKI data from one or more certificates.
-# 
+#
 # An alternative way of doing something similar is:
 #   openssl -in file.crt -inform der -noout -C
 #
